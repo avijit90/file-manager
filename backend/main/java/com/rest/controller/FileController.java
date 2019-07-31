@@ -1,14 +1,20 @@
 package com.rest.controller;
 
 import com.rest.service.FileService;
+import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import static org.apache.logging.log4j.util.Strings.isNotEmpty;
@@ -22,8 +28,8 @@ public class FileController {
 
     @PostMapping(value = "/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file,
-                             @RequestParam(required = false) String encodedFileStoragePath) {
-        String storageLocation = fileService.storeFile(file, encodedFileStoragePath);
+                             @RequestParam(required = false) String path) {
+        String storageLocation = fileService.storeFile(file, path);
 
         if (isNotEmpty(storageLocation))
             return "File upload completed, storageLocation - " + storageLocation;
@@ -34,9 +40,9 @@ public class FileController {
     @GetMapping(value = "/download")
     @ResponseBody
     public void downloadFile(HttpServletResponse response,
-                             @RequestParam String encodedFileDownloadPath) {
+                             @RequestParam String path) {
 
-        File fileToDownload = fileService.readFileFromPath(encodedFileDownloadPath);
+        File fileToDownload = fileService.readFileFromPath(path);
 
         try {
             InputStream inputStream = new FileInputStream(fileToDownload);
@@ -47,6 +53,26 @@ public class FileController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    @GetMapping(path = "/testDownload")
+    public ResponseEntity<byte[]> getRandomFile(@RequestParam String path) {
+        File fileToDownload = fileService.readFileFromPath(path);
+
+        byte[] fileContent = null;
+        try {
+            fileContent = FileUtils.readFileToByteArray(fileToDownload);
+        } catch (IOException e) {
+            //throw new IOException("Unable to convert file to byte array. " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        header.setContentLength(fileContent.length);
+        header.set("Content-Disposition", "attachment; filename=" + fileToDownload.getName());
+        return new ResponseEntity<>(fileContent, header, HttpStatus.OK);
     }
 
     private void addResponseHeadersToAllowFileDownload(HttpServletResponse response, File fileToDownload) {
