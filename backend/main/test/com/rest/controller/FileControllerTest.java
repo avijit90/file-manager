@@ -9,6 +9,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +36,7 @@ public class FileControllerTest {
     public void givenValidStorageLocationByFileServiceThenShouldReturnSuccessResponse() {
         MultipartFile file = mock(MultipartFile.class);
         String path = "temp/path";
-        String validStorageLocation = "temp/storage/location";
+        String validStorageLocation = "valid/storage/location";
 
         when(fileService.storeFile(file, path)).thenReturn(validStorageLocation);
 
@@ -60,6 +63,22 @@ public class FileControllerTest {
 
         assertNotNull(response);
         assertTrue(response.contains("failed"));
+    }
+
+    @Test
+    public void givenValidFilePathThenShouldDownload() {
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        String validFilePath = "valid/path";
+        File file = mock(File.class);
+
+        when(fileService.readFileFromPath(eq(validFilePath))).thenReturn(file);
+        when(file.getPath()).thenReturn(validFilePath);
+        //TODO mock file.isInvalid() -- when(file.isInvalid()).thenReturn(false);
+
+        String actualResponse = unit.downloadFile(response, validFilePath);
+
+        verify(fileService).readFileFromPath(eq(validFilePath));
     }
 
 
