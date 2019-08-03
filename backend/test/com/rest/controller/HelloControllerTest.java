@@ -12,7 +12,8 @@ import java.util.Date;
 
 import static com.rest.controller.HelloController.CURRENT_TIME_AT_SERVER_STRING;
 import static com.rest.controller.HelloController.DATE_TIME_FORMAT;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,7 +53,7 @@ public class HelloControllerTest {
         try {
             Date responseDate = new SimpleDateFormat(DATE_TIME_FORMAT).parse(result[1]);
             Date currentDate = new Date();
-            assertFalse(responseDate.compareTo(currentDate) < 0);
+            assertTrue(responseDate.compareTo(currentDate) <= 0);
         } catch (ParseException e) {
             e.printStackTrace();
         }

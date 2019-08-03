@@ -9,11 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static com.rest.controller.FileController.APPLICATION_FORCE_DOWNLOAD;
+import static com.rest.controller.FileController.DOWNLOAD_SUCCESSFUL;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -66,19 +69,24 @@ public class FileControllerTest {
     }
 
     @Test
-    public void givenValidFilePathThenShouldDownload() {
+    public void givenValidFilePathThenShouldDownload() throws IOException {
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         String validFilePath = "valid/path";
-        File file = mock(File.class);
+        File file = new File("./backend/test/resources/Test.txt");
 
         when(fileService.readFileFromPath(eq(validFilePath))).thenReturn(file);
-        when(file.getPath()).thenReturn(validFilePath);
-        //TODO mock file.isInvalid() -- when(file.isInvalid()).thenReturn(false);
+        ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(servletOutputStream);
 
         String actualResponse = unit.downloadFile(response, validFilePath);
-
+        assertNotNull(actualResponse);
         verify(fileService).readFileFromPath(eq(validFilePath));
+        verify(response).getOutputStream();
+        verify(response).setContentType(APPLICATION_FORCE_DOWNLOAD);
+        verify(response).setHeader(any(), any());
+        assertEquals(actualResponse, DOWNLOAD_SUCCESSFUL);
+
     }
 
 
