@@ -17,6 +17,10 @@ import static org.apache.tomcat.util.http.fileupload.IOUtils.copy;
 @RequestMapping(path = "/file")
 public class FileController {
 
+    public static final String APPLICATION_FORCE_DOWNLOAD = "application/force-download";
+    public static final String CONTENT_DISPOSITION = "Content-Disposition";
+    public static final String DOWNLOAD_FAILED = "Download failed.";
+    public static final String DOWNLOAD_SUCCESSFUL = "Download successful.";
     @Autowired
     private FileService fileService;
 
@@ -46,15 +50,15 @@ public class FileController {
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
-            return "Download failed.";
+            return DOWNLOAD_FAILED;
         }
 
-        return "Download successful.";
+        return DOWNLOAD_SUCCESSFUL;
 
     }
 
     private void addResponseHeadersToAllowFileDownload(HttpServletResponse response, File fileToDownload) {
-        response.setContentType("application/force-download");
-        response.setHeader("Content-Disposition", "attachment; filename=" + fileToDownload.getName());
+        response.setContentType(APPLICATION_FORCE_DOWNLOAD);
+        response.setHeader(CONTENT_DISPOSITION, "attachment; filename=" + fileToDownload.getName());
     }
 }
