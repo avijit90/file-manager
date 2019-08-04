@@ -94,7 +94,6 @@ public class FileControllerTest {
         String invalidFilePath = "invalid/path";
 
         ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
-        when(response.getOutputStream()).thenReturn(servletOutputStream);
 
         String actualResponse = unit.downloadFile(response, invalidFilePath);
         assertNotNull(actualResponse);
