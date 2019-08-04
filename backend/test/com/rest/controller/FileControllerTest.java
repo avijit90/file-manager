@@ -14,8 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
-import static com.rest.controller.FileController.APPLICATION_FORCE_DOWNLOAD;
-import static com.rest.controller.FileController.DOWNLOAD_SUCCESSFUL;
+import static com.rest.controller.FileController.*;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,8 +71,8 @@ public class FileControllerTest {
     public void givenValidFilePathThenShouldDownload() throws IOException {
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        String validFilePath = "valid/path";
-        File file = new File("./backend/test/resources/Test.txt");
+        String validFilePath = "./backend/test/resources/Test.txt";
+        File file = new File(validFilePath);
 
         when(fileService.readFileFromPath(eq(validFilePath))).thenReturn(file);
         ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
@@ -86,6 +85,22 @@ public class FileControllerTest {
         verify(response).setContentType(APPLICATION_FORCE_DOWNLOAD);
         verify(response).setHeader(any(), any());
         assertEquals(actualResponse, DOWNLOAD_SUCCESSFUL);
+    }
+
+    @Test
+    public void givenInValidFilePathThenDownloadShouldFail() throws IOException {
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        String invalidFilePath = "invalid/path";
+
+        ServletOutputStream servletOutputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(servletOutputStream);
+
+        String actualResponse = unit.downloadFile(response, invalidFilePath);
+        assertNotNull(actualResponse);
+        verify(fileService).readFileFromPath(eq(invalidFilePath));
+        verifyZeroInteractions(response);
+        assertEquals(actualResponse, DOWNLOAD_FAILED);
     }
 
 
