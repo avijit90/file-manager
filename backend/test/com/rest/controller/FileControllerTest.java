@@ -86,7 +86,6 @@ public class FileControllerTest {
         verify(response).setContentType(APPLICATION_FORCE_DOWNLOAD);
         verify(response).setHeader(any(), any());
         assertEquals(actualResponse, DOWNLOAD_SUCCESSFUL);
-
     }
 
 
