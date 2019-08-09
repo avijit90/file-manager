@@ -11,6 +11,7 @@ import java.util.Base64;
 import static java.nio.file.Files.copy;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.apache.commons.io.FileUtils.getFile;
 import static org.apache.logging.log4j.util.Strings.isNotEmpty;
 import static org.springframework.util.StringUtils.cleanPath;
 
@@ -28,12 +29,12 @@ public class FileService {
 
     public File readFileFromPath(String encodedFilePath) {
         String decodedFilePath = getDecodedFilePath(encodedFilePath);
-        return new File(decodedFilePath);
+        return getFile(decodedFilePath);
     }
 
     public String storeFile(MultipartFile file, String encodedFileStoragePath) {
 
-        String fileName = cleanPath(file.getOriginalFilename());
+        String fileName = cleanPath(file.getName());
 
         try {
             String fileStoragePath = getFileStoragePath(encodedFileStoragePath);
@@ -46,8 +47,8 @@ public class FileService {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     private String getFileStoragePath(String encodedFileStoragePath) {

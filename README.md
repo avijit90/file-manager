@@ -1,4 +1,4 @@
-# File-Manager
+# file-manager
 A simple utility project which can be used to upload and download files.
 The UI is written in react and the backend in spring-boot.
 The react and spring-boot components are packaged into a single runnable jar.
