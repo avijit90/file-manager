@@ -17,7 +17,8 @@ class App extends Component {
         error: '',
         msg: '',
         downloadPath: '',
-        uploadPath: ''
+        uploadPath: '',
+        serverAdd: ''
     }
 
     getEncodedValue = (rawString) => {
@@ -33,6 +34,12 @@ class App extends Component {
     handleUploadChange = (e) => {
         this.setState({
             uploadPath: e.target.value
+        });
+    }
+
+    handleServerPathChange = (e) => {
+        this.setState({
+            serverAdd: e.target.value
         });
     }
 
@@ -63,10 +70,18 @@ class App extends Component {
     }
 
     download = () => {
+
+        fetch('/address/server')
+                  .then(response => response.text())
+                  .then(msg => {
+                      this.setState({msg: msg});
+                  });
+
+
         var encodedValue = this.getEncodedValue(this.state.downloadPath);
         setTimeout(() => {
           const response = {
-            file: 'http://localhost:8080/file/download?path=' + encodedValue,
+            file: 'http://' + this.state.serverAdd + ':8080/file/download?path=' + encodedValue,
           };
           window.location.href = response.file;
           this.setState({error: '', msg: 'Sucessfully downloaded file'});
@@ -114,6 +129,9 @@ class App extends Component {
                 Download path:
                 <input className="App-input-text" type="text" value={this.state.downloadPath} onChange={this.handleDownloadChange} />
                 <button className="App-button" onClick={this.download}>Download</button>
+                <br/>
+                Ip Address:
+                <input className="App-input-text" type="text" value={this.state.serverPath} onChange={this.handleServerPathChange} />
                 <br/>
             </div>
           </div>
