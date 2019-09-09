@@ -88,7 +88,7 @@ public class FileControllerTest {
     }
 
     @Test
-    public void givenInValidFilePathThenDownloadShouldFail() throws IOException {
+    public void givenInvalidFilePathThenDownloadShouldFail() throws IOException {
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         String invalidFilePath = "invalid/path";

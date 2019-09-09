@@ -47,6 +47,7 @@
     <build>
 
         <sourceDirectory>backend/main/java/</sourceDirectory>
+        <testSourceDirectory>backend/test/java/</testSourceDirectory>
 
         <plugins>
             <plugin>
