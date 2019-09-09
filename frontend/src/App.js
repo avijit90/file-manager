@@ -10,6 +10,8 @@ class App extends Component {
         this.handleDownloadChange = this.handleDownloadChange.bind(this);
         this.handleUploadChange = this.handleUploadChange.bind(this);
         console.log("React App is up and running !");
+        this.state.serverAdd = window.location.hostname;
+        console.log('currentHostname = '+ this.state.serverAdd)
     }
 
     state = {
@@ -84,7 +86,7 @@ class App extends Component {
             file: 'http://' + this.state.serverAdd + ':8080/file/download?path=' + encodedValue,
           };
           window.location.href = response.file;
-          this.setState({error: '', msg: 'Sucessfully downloaded file'});
+          this.setState({error: '', msg: 'File download successfully initiated..'});
           this.setState({uploadPath: ''});
         }, 100);
     }
@@ -115,7 +117,7 @@ class App extends Component {
               <h4 style={{color: '#90e81c'}}>{this.state.msg}</h4>
               <h3>Check connectivity with a simple Handshake</h3>
               <button className="App-button" onClick={this.hello}>Handshake</button>
-            </div>
+              </div>
             <div className="App-intro">
               <h3>Upload File</h3>
                Upload Location:
@@ -129,10 +131,6 @@ class App extends Component {
                 Download path:
                 <input className="App-input-text" type="text" value={this.state.downloadPath} onChange={this.handleDownloadChange} />
                 <button className="App-button" onClick={this.download}>Download</button>
-                <br/>
-                Ip Address:
-                <input className="App-input-text" type="text" value={this.state.serverPath} onChange={this.handleServerPathChange} />
-                <br/>
             </div>
           </div>
         );
