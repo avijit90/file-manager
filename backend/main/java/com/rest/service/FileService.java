@@ -23,7 +23,7 @@ public class FileService {
     private String getDecodedFilePath(String encodedPath) {
         byte[] decodedBytes = Base64.getDecoder().decode(encodedPath);
         String filePath = new String(decodedBytes);
-        System.out.println("decoded path is :" + filePath);
+        System.out.println("decoded path is - \"{" + filePath + "}\"");
         return filePath;
     }
 
