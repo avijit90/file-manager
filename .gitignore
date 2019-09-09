@@ -1,0 +1,5 @@
+# ignore a file type
+*.iml
+
+# ignore an entire directory
+/.idea/
