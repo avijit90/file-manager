@@ -10,9 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Base64;
 
 import static org.apache.commons.io.FileUtils.contentEquals;
@@ -67,6 +65,23 @@ public class FileServiceTest {
 
             assertNotNull(response);
             File newlyCreatedFile = getFile(response + "\\" + newFileName);
+
+            System.out.println("Existing file contents :");
+            try (BufferedReader br = new BufferedReader(new FileReader(VALID_FILE_PATH))) {
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+            System.out.println("-----------------------");
+            System.out.println("New file contents :");
+            try (BufferedReader br = new BufferedReader(new FileReader(response + "\\" + newFileName))) {
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+
             assertTrue(FileUtils.contentEquals(FileUtils.getFile(VALID_FILE_PATH), newlyCreatedFile));
             FileUtils.deleteQuietly(newlyCreatedFile);
         } catch (Exception e) {
